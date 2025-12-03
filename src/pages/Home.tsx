@@ -1,4 +1,5 @@
 import { Wallet, TrendingDown, PiggyBank, CreditCard } from "lucide-react";
+import { PageLayout } from "../components/PageLayout";
 
 export function Home() {
   const stats = [
@@ -23,14 +24,10 @@ export function Home() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight">Tableau de bord</h1>
-        <p className="text-muted-foreground mt-2">
-          Vue d'ensemble de vos finances
-        </p>
-      </div>
-
+    <PageLayout
+      title="Tableau de bord"
+      description="Vue d'ensemble de vos finances"
+    >
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
@@ -82,6 +79,6 @@ export function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }

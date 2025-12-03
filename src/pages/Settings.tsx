@@ -1,5 +1,6 @@
 import { User, Bell, Lock, Globe, Moon, Sun } from "lucide-react";
 import { useState } from "react";
+import { PageLayout } from "../components/PageLayout";
 
 export function Settings() {
   const [isDark, setIsDark] = useState(false);
@@ -32,14 +33,10 @@ export function Settings() {
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold tracking-tight">Paramètres</h1>
-        <p className="text-muted-foreground mt-2">
-          Gérez vos préférences et votre compte
-        </p>
-      </div>
-
+    <PageLayout
+      title="Paramètres"
+      description="Gérez vos préférences et votre compte"
+    >
       <div className="rounded-lg border border-border bg-card p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -122,6 +119,6 @@ export function Settings() {
           Enregistrer les modifications
         </button>
       </div>
-    </div>
+    </PageLayout>
   );
 }

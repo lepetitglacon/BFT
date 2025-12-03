@@ -23,6 +23,7 @@ import {
   PopoverTrigger,
 } from "../components/ui/popover"
 import { Label } from "../components/ui/label"
+import { PageLayout } from "../components/PageLayout"
 
 export function Expenses() {
   const { data: expenses = [], isLoading } = useExpenses()
@@ -207,14 +208,10 @@ export function Expenses() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">Mes dépenses</h1>
-          <p className="text-muted-foreground mt-2">
-            Gérez et suivez toutes vos dépenses
-          </p>
-        </div>
+    <PageLayout
+      title="Mes dépenses"
+      description="Gérez et suivez toutes vos dépenses"
+      actions={
         <div className="flex gap-2">
           <button
             onClick={() => setIsCsvModalOpen(true)}
@@ -231,7 +228,8 @@ export function Expenses() {
             Nouvelle dépense
           </button>
         </div>
-      </div>
+      }
+    >
 
       {/* Barre d'actions groupées */}
       {selectedIds.size > 0 && (
@@ -582,6 +580,6 @@ export function Expenses() {
         onClose={() => setIsCsvModalOpen(false)}
         onImport={handleImportCsv}
       />
-    </div>
+    </PageLayout>
   )
 }

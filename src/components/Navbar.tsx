@@ -1,18 +1,28 @@
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { Menu, X, Wallet, Home, TrendingUp, Settings, User, PiggyBank } from "lucide-react";
+import { useState } from "react"
+import { NavLink } from "react-router-dom"
+import {
+  Home,
+  Menu,
+  PiggyBank,
+  Settings,
+  TrendingUp,
+  User,
+  Wallet,
+  X,
+} from "lucide-react"
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const toggleMenu = () => setIsOpen(!isOpen)
 
   const navItems = [
     { name: "Accueil", to: "/", icon: Home },
     { name: "Dépenses", to: "/expenses", icon: TrendingUp },
     { name: "Prévisions", to: "/budget", icon: PiggyBank },
+    { name: "Graph", to: "/graph", icon: PiggyBank },
     { name: "Paramètres", to: "/settings", icon: Settings },
-  ];
+  ]
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -28,7 +38,7 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex md:items-center md:gap-6">
           {navItems.map((item) => {
-            const Icon = item.icon;
+            const Icon = item.icon
             return (
               <NavLink
                 key={item.name}
@@ -42,7 +52,7 @@ export function Navbar() {
                 <Icon className="h-4 w-4" />
                 {item.name}
               </NavLink>
-            );
+            )
           })}
         </div>
 
@@ -69,7 +79,7 @@ export function Navbar() {
         <div className="border-t border-border/40 md:hidden">
           <div className="container space-y-1 px-4 py-4">
             {navItems.map((item) => {
-              const Icon = item.icon;
+              const Icon = item.icon
               return (
                 <NavLink
                   key={item.name}
@@ -86,7 +96,7 @@ export function Navbar() {
                   <Icon className="h-5 w-5" />
                   {item.name}
                 </NavLink>
-              );
+              )
             })}
             <div className="pt-2">
               <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground">
@@ -98,5 +108,5 @@ export function Navbar() {
         </div>
       )}
     </nav>
-  );
+  )
 }

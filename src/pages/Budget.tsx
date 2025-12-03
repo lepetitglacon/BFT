@@ -4,6 +4,7 @@ import { useExpenses } from "../hooks/useExpenses"
 import { useSalary, useSetSalary } from "../hooks/useSalary"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
+import { PageLayout } from "../components/PageLayout"
 
 export function Budget() {
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -104,14 +105,9 @@ export function Budget() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header avec input salaire */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h1 className="text-4xl font-bold tracking-tight text-center">
-            Prévisions budgétaires
-          </h1>
-        </div>
+    <PageLayout
+      title="Prévisions budgétaires"
+      actions={
         <div className="w-64">
           <Label
             htmlFor="salary"
@@ -135,7 +131,8 @@ export function Budget() {
             </span>
           </div>
         </div>
-      </div>
+      }
+    >
 
       {/* Sélecteur de mois centré */}
       <div className="flex items-center justify-center gap-4">
@@ -296,6 +293,6 @@ export function Budget() {
           </div>
         )}
       </div>
-    </div>
+    </PageLayout>
   )
 }

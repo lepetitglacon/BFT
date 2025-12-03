@@ -5,6 +5,7 @@ import { Home } from "./pages/Home"
 import { Expenses } from "./pages/Expenses"
 import { Budget } from "./pages/Budget"
 import { Settings } from "./pages/Settings"
+import { Sankey } from "@/pages/Sankey.tsx"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/budget" element={<Budget />} />
+          <Route path="/graph" element={<Sankey />} />
           <Route path="/settings" element={<Settings />} />
         </Routes>
       </main>
