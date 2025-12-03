@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Menu, X, Wallet, Home, TrendingUp, Settings, User, PiggyBank } from "lucide-react";
+import { Menu, X, Wallet, Home, TrendingUp, Settings, User, PiggyBank, Network } from "lucide-react";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +11,7 @@ export function Navbar() {
     { name: "Accueil", to: "/", icon: Home },
     { name: "Dépenses", to: "/expenses", icon: TrendingUp },
     { name: "Prévisions", to: "/budget", icon: PiggyBank },
+    { name: "Flux", to: "/graph", icon: Network },
     { name: "Paramètres", to: "/settings", icon: Settings },
   ];
 
