@@ -1,13 +1,15 @@
-import React, { useMemo } from "react"
+import { useEffect, useRef } from "react"
+import * as d3 from "d3"
+import { sankey, sankeyLinkHorizontal } from "d3-sankey"
 
-interface SankeyLink {
+interface SankeyLinkData {
   source: string
   target: string
   value: number
 }
 
 interface SankeyData {
-  links: SankeyLink[]
+  links: SankeyLinkData[]
 }
 
 interface SimpleSankeyChartProps {
@@ -17,138 +19,158 @@ interface SimpleSankeyChartProps {
   }
 }
 
+interface GraphNode {
+  name: string
+  x0?: number
+  x1?: number
+  y0?: number
+  y1?: number
+  value?: number
+}
+
+interface GraphLink {
+  source: number | GraphNode
+  target: number | GraphNode
+  value: number
+  width?: number
+  y0?: number
+  y1?: number
+}
+
 export function SimpleSankeyChart({ height, series }: SimpleSankeyChartProps) {
-  const { nodes, links } = useMemo(() => {
-    const nodeSet = new Set<string>()
+  const svgRef = useRef<SVGSVGElement>(null)
+
+  useEffect(() => {
+    if (!svgRef.current || !series.data.links.length) return
+
+    const width = 800
+    const margin = { top: 40, right: 120, bottom: 40, left: 120 }
+
+    // Clear previous content
+    d3.select(svgRef.current).selectAll("*").remove()
+
+    // Create nodes from links
+    const nodeNames = new Set<string>()
     series.data.links.forEach((link) => {
-      nodeSet.add(link.source)
-      nodeSet.add(link.target)
+      nodeNames.add(link.source)
+      nodeNames.add(link.target)
     })
 
-    // Organize nodes by columns
-    const sources = new Set(series.data.links.map((l) => l.source))
-    const targets = new Set(series.data.links.map((l) => l.target))
-    const sourceOnlyNodes = Array.from(sources).filter((s) => !targets.has(s))
-    const targetOnlyNodes = Array.from(targets).filter((t) => !sources.has(t))
-    const middleNodes = Array.from(nodeSet).filter(
-      (n) => !sourceOnlyNodes.includes(n) && !targetOnlyNodes.includes(n)
-    )
+    const nodes: GraphNode[] = Array.from(nodeNames).map((name) => ({
+      name,
+    }))
 
-    const columns = [sourceOnlyNodes, middleNodes, targetOnlyNodes].filter(
-      (col) => col.length > 0
-    )
+    const nodeMap = new Map(nodes.map((node, i) => [node.name, i]))
 
-    // Calculate node values
-    const nodeValues = new Map<string, number>()
-    series.data.links.forEach((link) => {
-      nodeValues.set(
-        link.source,
-        (nodeValues.get(link.source) || 0) + link.value
-      )
-      nodeValues.set(
-        link.target,
-        (nodeValues.get(link.target) || 0) + link.value
-      )
+    // Create links with indices
+    const links: GraphLink[] = series.data.links.map((link) => ({
+      source: nodeMap.get(link.source)!,
+      target: nodeMap.get(link.target)!,
+      value: link.value,
+    }))
+
+    // Create Sankey layout
+    const sankeyGenerator = sankey<GraphNode, GraphLink>()
+      .nodeWidth(20)
+      .nodePadding(20)
+      .extent([
+        [margin.left, margin.top],
+        [width - margin.right, height - margin.bottom],
+      ])
+
+    const graph = sankeyGenerator({
+      nodes: nodes.map((d) => ({ ...d })),
+      links: links.map((d) => ({ ...d })),
     })
 
-    return {
-      nodes: columns,
-      links: series.data.links,
-      nodeValues,
-    }
-  }, [series.data.links])
+    const svg = d3.select(svgRef.current)
 
-  const width = 800
-  const padding = 40
-  const nodeWidth = 20
-  const columnSpacing = (width - 2 * padding - nodeWidth) / (nodes.length - 1)
+    // Color scale
+    const color = d3.scaleOrdinal(d3.schemeCategory10)
 
-  const nodePositions = new Map<string, { x: number; y: number; height: number }>()
+    // Draw links
+    svg
+      .append("g")
+      .selectAll("path")
+      .data(graph.links)
+      .join("path")
+      .attr("d", sankeyLinkHorizontal())
+      .attr("stroke-width", (d) => Math.max(1, d.width!))
+      .attr("stroke", (d) => {
+        const sourceNode = d.source as GraphNode
+        return color(sourceNode.name)
+      })
+      .attr("stroke-opacity", 0.5)
+      .attr("fill", "none")
+      .append("title")
+      .text((d) => {
+        const sourceNode = d.source as GraphNode
+        const targetNode = d.target as GraphNode
+        return `${sourceNode.name} → ${targetNode.name}\n${d.value.toFixed(2)}€`
+      })
 
-  nodes.forEach((column, colIndex) => {
-    const x = padding + colIndex * columnSpacing
-    const columnHeight = height - 2 * padding
-    const spacing = columnHeight / (column.length + 1)
+    // Draw nodes
+    const node = svg
+      .append("g")
+      .selectAll("rect")
+      .data(graph.nodes)
+      .join("rect")
+      .attr("x", (d) => d.x0!)
+      .attr("y", (d) => d.y0!)
+      .attr("height", (d) => d.y1! - d.y0!)
+      .attr("width", (d) => d.x1! - d.x0!)
+      .attr("fill", (d) => color(d.name))
+      .attr("stroke", "#000")
+      .attr("stroke-width", 0.5)
+      .attr("rx", 4)
 
-    column.forEach((nodeName, nodeIndex) => {
-      const y = padding + spacing * (nodeIndex + 1)
-      const nodeHeight = 40
-      nodePositions.set(nodeName, { x, y, height: nodeHeight })
+    node.append("title").text((d) => {
+      const value = d.value || 0
+      return `${d.name}\n${value.toFixed(2)}€`
     })
-  })
 
-  // Generate curved path for links
-  const generatePath = (
-    x1: number,
-    y1: number,
-    h1: number,
-    x2: number,
-    y2: number,
-    h2: number
-  ) => {
-    const midX = (x1 + x2) / 2
-    const startY = y1 + h1 / 2
-    const endY = y2 + h2 / 2
+    // Add node labels
+    svg
+      .append("g")
+      .selectAll("text")
+      .data(graph.nodes)
+      .join("text")
+      .attr("x", (d) => (d.x0! < width / 2 ? d.x1! + 6 : d.x0! - 6))
+      .attr("y", (d) => (d.y1! + d.y0!) / 2)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", (d) => (d.x0! < width / 2 ? "start" : "end"))
+      .attr("font-size", "12px")
+      .attr("fill", "#64748b")
+      .text((d) => d.name)
 
-    return `
-      M ${x1 + nodeWidth} ${startY}
-      C ${midX} ${startY},
-        ${midX} ${endY},
-        ${x2} ${endY}
-    `
-  }
+    // Add value labels
+    svg
+      .append("g")
+      .selectAll("text.value")
+      .data(graph.nodes)
+      .join("text")
+      .attr("class", "value")
+      .attr("x", (d) => (d.x0! < width / 2 ? d.x1! + 6 : d.x0! - 6))
+      .attr("y", (d) => (d.y1! + d.y0!) / 2 + 14)
+      .attr("dy", "0.35em")
+      .attr("text-anchor", (d) => (d.x0! < width / 2 ? "start" : "end"))
+      .attr("font-size", "10px")
+      .attr("fill", "#94a3b8")
+      .text((d) => {
+        const value = d.value || 0
+        return `${value.toFixed(2)}€`
+      })
+  }, [series.data.links, height])
 
   return (
-    <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
-      {/* Draw links */}
-      {links.map((link, index) => {
-        const sourcePos = nodePositions.get(link.source)
-        const targetPos = nodePositions.get(link.target)
-        if (!sourcePos || !targetPos) return null
-
-        return (
-          <g key={index}>
-            <path
-              d={generatePath(
-                sourcePos.x,
-                sourcePos.y,
-                sourcePos.height,
-                targetPos.x,
-                targetPos.y,
-                targetPos.height
-              )}
-              stroke="#94a3b8"
-              strokeWidth={link.value * 2}
-              fill="none"
-              opacity={0.4}
-            />
-          </g>
-        )
-      })}
-
-      {/* Draw nodes */}
-      {Array.from(nodePositions.entries()).map(([nodeName, pos]) => (
-        <g key={nodeName}>
-          <rect
-            x={pos.x}
-            y={pos.y}
-            width={nodeWidth}
-            height={pos.height}
-            fill="#3b82f6"
-            rx={4}
-          />
-          <text
-            x={pos.x + nodeWidth / 2}
-            y={pos.y - 8}
-            textAnchor="middle"
-            fill="#64748b"
-            fontSize="14"
-            fontWeight="500"
-          >
-            {nodeName}
-          </text>
-        </g>
-      ))}
-    </svg>
+    <div className="w-full overflow-x-auto">
+      <svg
+        ref={svgRef}
+        width="100%"
+        height={height}
+        viewBox={`0 0 800 ${height}`}
+        style={{ maxWidth: "100%", height: "auto" }}
+      />
+    </div>
   )
 }

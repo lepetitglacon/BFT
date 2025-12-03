@@ -6,7 +6,8 @@
       "Bash(npx shadcn@latest add dialog:*)",
       "Bash(npx shadcn@latest add button input label)",
       "Bash(npx shadcn@latest add:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "WebFetch(domain:d585tldpucybw.cloudfront.net)"
     ],
     "deny": [],
     "ask": []
