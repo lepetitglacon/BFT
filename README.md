@@ -5,6 +5,8 @@
 - imports de différentes banques
     - imports via API
 
+# test CI
+
 # Roadmap
 
 1. Flow chart par mois ✅ TERMINÉ
@@ -38,33 +40,34 @@ Fonctionnalités implémentées :
 
 3. OCR des photos de notes ✅ TERMINÉ
 
-État : Les utilisateurs peuvent maintenant scanner des tickets de caisse et extraire automatiquement les données avec une sélection interactive ligne par ligne.
+État : Les utilisateurs peuvent maintenant scanner des tickets de caisse et extraire automatiquement les données avec
+une sélection interactive ligne par ligne.
 
 Fonctionnalités implémentées :
 
 - ✅ Solution OCR : Tesseract.js (client-side, gratuit)
 - ✅ Composant ReceiptScanner.tsx avec preview et progression
 - ✅ **Interface de sélection interactive**
-  - Affichage du texte OCR ligne par ligne
-  - Sélection manuelle des lignes pour chaque champ (Description, Montant, Date, Catégorie)
-  - Code couleur pour différencier les champs sélectionnés
-  - Pré-sélection automatique suggérée par le parser
-  - Interface intuitive avec boutons de champ colorés
+    - Affichage du texte OCR ligne par ligne
+    - Sélection manuelle des lignes pour chaque champ (Description, Montant, Date, Catégorie)
+    - Code couleur pour différencier les champs sélectionnés
+    - Pré-sélection automatique suggérée par le parser
+    - Interface intuitive avec boutons de champ colorés
 - ✅ Service receiptParser.ts pour parser le texte OCR
-  - Extraction du commerçant
-  - Extraction de la date (formats multiples)
-  - Extraction du montant total
-  - Extraction des articles
-  - Détection automatique de la catégorie
+    - Extraction du commerçant
+    - Extraction de la date (formats multiples)
+    - Extraction du montant total
+    - Extraction des articles
+    - Détection automatique de la catégorie
 - ✅ Intégration dans ExpenseModal avec système d'onglets
-  - Onglet "Saisie manuelle"
-  - Onglet "Scanner un ticket"
-  - Validation et correction manuelle
+    - Onglet "Saisie manuelle"
+    - Onglet "Scanner un ticket"
+    - Validation et correction manuelle
 - ✅ Service imageStorage.ts pour la gestion des images
-  - Compression automatique des images
-  - Stockage dans localStorage (base64)
-  - Association image/dépense via ID unique
-  - Fonctions de nettoyage des images orphelines
+    - Compression automatique des images
+    - Stockage dans localStorage (base64)
+    - Association image/dépense via ID unique
+    - Fonctions de nettoyage des images orphelines
 
   ---
 
