@@ -10,6 +10,7 @@
 - ajouté la var IP dans github
 - nouvelle clé SSH sans password
 - again and again
+- zqdzq
 
 # Roadmap
 
