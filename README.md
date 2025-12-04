@@ -11,6 +11,7 @@
 - nouvelle clé SSH sans password
 - again and again
 - zqdzq
+- ptn c'était pas les bonnes keys
 
 # Roadmap
 
