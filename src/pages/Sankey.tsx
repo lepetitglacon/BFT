@@ -1,13 +1,10 @@
 import { useMemo, useState } from "react"
 import { useExpenses } from "../hooks/useExpenses"
-import { useSalary } from "../hooks/useSalary"
 import { SimpleSankeyChart } from "../components/SimpleSankeyChart"
 import { PageLayout } from "../components/PageLayout"
 
 export function Sankey() {
   const { data: expenses = [], isLoading } = useExpenses()
-  const { data: salaryData } = useSalary()
-  const monthlySalary = salaryData?.monthlySalary ?? 0
 
   // État pour le mois/année sélectionné (par défaut: mois actuel)
   const currentDate = new Date()
@@ -28,7 +25,7 @@ export function Sankey() {
 
   // Créer les liens pour le diagramme Sankey
   const sankeyLinks = useMemo(() => {
-    const links = []
+    const links: any[] = []
 
     // Séparer revenus et dépenses, triés par montant décroissant (TOUS les types, pas seulement récurrents)
     const incomes = filteredExpenses
