@@ -189,28 +189,25 @@ export function CsvImportModal({
   }
 
   const handleImport = () => {
-    const expenses: Expense[] = csvData
-      .map((row, index) => {
-        const amount = parseFloat(
-          row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
-        )
+    const expenses: Expense[] = csvData.map((row, index) => {
+      const amount = parseFloat(
+        row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
+      )
 
-        const dateStr = row[parseInt(mapping.date)] || ""
+      const dateStr = row[parseInt(mapping.date)] || ""
 
-        return {
-          id: Date.now() + index,
-          description: row[parseInt(mapping.description)] || "Sans description",
-          category: mapping.category
-            ? row[parseInt(mapping.category)] || "Autre"
-            : "Autre",
-          amount: Math.abs(amount),
-          date: parseFrenchDate(dateStr),
-          recurring: false,
-          isExpense: amount < 0, // Pour filtrer après
-        }
-      })
-      .filter((expense) => expense.isExpense) // Ne garder que les dépenses (montants négatifs)
-      .map(({ isExpense, ...expense }) => expense) // Retirer le flag temporaire
+      return {
+        id: Date.now() + index,
+        description: row[parseInt(mapping.description)] || "Sans description",
+        category: mapping.category
+          ? row[parseInt(mapping.category)] || "Autre"
+          : "Autre",
+        amount: Math.abs(amount),
+        date: parseFrenchDate(dateStr),
+        recurring: false,
+        type: amount < 0 ? ("expense" as const) : ("income" as const),
+      }
+    })
 
     onImport(expenses)
     handleClose()
@@ -246,7 +243,7 @@ export function CsvImportModal({
             {step === "mapping" &&
               "Associez les colonnes de votre CSV aux champs de dépense"}
             {step === "preview" &&
-              `Prévisualisation de ${csvData.length} dépense(s) à importer`}
+              `Prévisualisation de ${csvData.length} transaction(s) à importer`}
           </DialogDescription>
         </DialogHeader>
 
@@ -382,7 +379,16 @@ export function CsvImportModal({
                     return amount < 0
                   }).length
                 }{" "}
-                dépense(s) (les revenus sont ignorés)
+                dépense(s) et{" "}
+                {
+                  csvData.filter((row) => {
+                    const amount = parseFloat(
+                      row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
+                    )
+                    return amount >= 0
+                  }).length
+                }{" "}
+                revenu(s)
               </span>
             </div>
 
@@ -404,12 +410,6 @@ export function CsvImportModal({
                 </thead>
                 <tbody>
                   {previewData
-                    .filter((row) => {
-                      const amount = parseFloat(
-                        row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
-                      )
-                      return amount < 0 // Ne montrer que les dépenses
-                    })
                     .slice(0, 5)
                     .map((row, index) => {
                       const amount = parseFloat(
@@ -428,7 +428,12 @@ export function CsvImportModal({
                               ? row[parseInt(mapping.category)] || "Autre"
                               : "Autre"}
                           </td>
-                          <td className="px-3 py-2 text-right font-medium">
+                          <td
+                            className={`px-3 py-2 text-right font-medium ${
+                              amount < 0 ? "text-red-500" : "text-green-500"
+                            }`}
+                          >
+                            {amount < 0 ? "-" : "+"}
                             {Math.abs(amount).toFixed(2)}€
                           </td>
                           <td className="px-3 py-2">{parsedDate}</td>
@@ -438,21 +443,11 @@ export function CsvImportModal({
                 </tbody>
               </table>
             </div>
-            {(() => {
-              const expenseCount = csvData.filter((row) => {
-                const amount = parseFloat(
-                  row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
-                )
-                return amount < 0
-              }).length
-              return (
-                expenseCount > 5 && (
-                  <p className="text-xs text-muted-foreground text-center">
-                    ... et {expenseCount - 5} autre(s) dépense(s)
-                  </p>
-                )
-              )
-            })()}
+            {csvData.length > 5 && (
+              <p className="text-xs text-muted-foreground text-center">
+                ... et {csvData.length - 5} autre(s) transaction(s)
+              </p>
+            )}
           </div>
         )}
 
@@ -485,16 +480,7 @@ export function CsvImportModal({
                 Retour
               </Button>
               <Button onClick={handleImport}>
-                Importer{" "}
-                {
-                  csvData.filter((row) => {
-                    const amount = parseFloat(
-                      row[parseInt(mapping.amount)]?.replace(",", ".") || "0"
-                    )
-                    return amount < 0
-                  }).length
-                }{" "}
-                dépense(s)
+                Importer {csvData.length} transaction(s)
               </Button>
             </>
           )}

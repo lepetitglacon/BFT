@@ -145,7 +145,7 @@ export function Expenses() {
       }
 
       return true
-    })
+    }).sort((a, b) => b.amount - a.amount) // Tri par montant décroissant
   }, [
     expenses,
     searchQuery,
@@ -531,8 +531,15 @@ export function Expenses() {
                     <td className="p-4 align-middle text-sm font-medium">
                       {expense.description}
                     </td>
-                    <td className="p-4 align-middle text-right text-sm font-semibold text-red-500">
-                      -{expense.amount.toFixed(2)}€
+                    <td
+                      className={`p-4 align-middle text-right text-sm font-semibold ${
+                        expense.type === "income"
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {expense.type === "income" ? "+" : "-"}
+                      {expense.amount.toFixed(2)}€
                     </td>
                     <td className="p-4 align-middle text-center">
                       {expense.recurring && (

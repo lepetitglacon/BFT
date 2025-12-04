@@ -7,6 +7,7 @@ export interface Expense {
   amount: number
   date: string
   recurring: boolean
+  type: "expense" | "income"
 }
 
 // Clé de query pour les dépenses
@@ -32,6 +33,7 @@ export function useExpenses() {
             amount: 45.5,
             date: "2025-11-30",
             recurring: false,
+            type: "expense" as const,
           },
           {
             id: 2,
@@ -40,6 +42,7 @@ export function useExpenses() {
             amount: 24.0,
             date: "2025-11-29",
             recurring: false,
+            type: "expense" as const,
           },
           {
             id: 3,
@@ -48,6 +51,7 @@ export function useExpenses() {
             amount: 65.0,
             date: "2025-11-28",
             recurring: false,
+            type: "expense" as const,
           },
           {
             id: 4,
@@ -56,6 +60,7 @@ export function useExpenses() {
             amount: 13.99,
             date: "2025-11-27",
             recurring: true,
+            type: "expense" as const,
           },
         ]
       )

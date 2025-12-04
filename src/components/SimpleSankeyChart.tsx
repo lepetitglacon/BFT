@@ -124,41 +124,34 @@ export function SimpleSankeyChart({ height, series }: SimpleSankeyChartProps) {
       .attr("stroke-width", 0.5)
       .attr("rx", 4)
 
+    // Add tooltips to nodes
     node.append("title").text((d) => {
       const value = d.value || 0
       return `${d.name}\n${value.toFixed(2)}€`
     })
 
-    // Add node labels
+    // Add value labels to nodes
     svg
       .append("g")
       .selectAll("text")
       .data(graph.nodes)
       .join("text")
-      .attr("x", (d) => (d.x0! < width / 2 ? d.x1! + 6 : d.x0! - 6))
+      .attr("x", (d) => (d.x0! + d.x1!) / 2)
       .attr("y", (d) => (d.y1! + d.y0!) / 2)
       .attr("dy", "0.35em")
-      .attr("text-anchor", (d) => (d.x0! < width / 2 ? "start" : "end"))
-      .attr("font-size", "12px")
-      .attr("fill", "#64748b")
-      .text((d) => d.name)
-
-    // Add value labels
-    svg
-      .append("g")
-      .selectAll("text.value")
-      .data(graph.nodes)
-      .join("text")
-      .attr("class", "value")
-      .attr("x", (d) => (d.x0! < width / 2 ? d.x1! + 6 : d.x0! - 6))
-      .attr("y", (d) => (d.y1! + d.y0!) / 2 + 14)
-      .attr("dy", "0.35em")
-      .attr("text-anchor", (d) => (d.x0! < width / 2 ? "start" : "end"))
+      .attr("text-anchor", "middle")
       .attr("font-size", "10px")
-      .attr("fill", "#94a3b8")
+      .attr("font-weight", "600")
+      .attr("fill", "#fff")
+      .attr("pointer-events", "none")
       .text((d) => {
         const value = d.value || 0
-        return `${value.toFixed(2)}€`
+        const nodeHeight = (d.y1! - d.y0!)
+        if (nodeHeight < 20) return ""
+
+        // Tronquer le nom à 15 caractères
+        const shortName = d.name.length > 15 ? d.name.substring(0, 15) + "..." : d.name
+        return `${value.toFixed(0)}€ - ${shortName}`
       })
   }, [series.data.links, height])
 

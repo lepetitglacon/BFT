@@ -32,6 +32,7 @@ export function ExpenseModal({
     amount: 0,
     date: new Date().toISOString().split("T")[0],
     recurring: false,
+    type: "expense",
   });
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export function ExpenseModal({
         amount: 0,
         date: new Date().toISOString().split("T")[0],
         recurring: false,
+        type: "expense",
       });
     }
   }, [expense]);
@@ -64,17 +66,47 @@ export function ExpenseModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {expense ? "Modifier la dépense" : "Nouvelle dépense"}
+            {expense
+              ? `Modifier ${formData.type === "income" ? "le revenu" : "la dépense"}`
+              : "Nouvelle transaction"}
           </DialogTitle>
           <DialogDescription>
             {expense
-              ? "Modifiez les informations de votre dépense"
-              : "Ajoutez une nouvelle dépense à votre liste"}
+              ? `Modifiez les informations de votre ${formData.type === "income" ? "revenu" : "dépense"}`
+              : "Ajoutez une nouvelle transaction à votre liste"}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Type de transaction</Label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="expense"
+                    checked={formData.type === "expense"}
+                    onChange={(e) => handleChange("type", e.target.value)}
+                    className="h-4 w-4"
+                  />
+                  <span className="text-sm">Dépense</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="income"
+                    checked={formData.type === "income"}
+                    onChange={(e) => handleChange("type", e.target.value)}
+                    className="h-4 w-4"
+                  />
+                  <span className="text-sm">Revenu</span>
+                </label>
+              </div>
+            </div>
+
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
               <Input
@@ -132,7 +164,7 @@ export function ExpenseModal({
                 className="h-4 w-4 rounded border-border"
               />
               <Label htmlFor="recurring" className="cursor-pointer">
-                Dépense récurrente
+                {formData.type === "income" ? "Revenu" : "Dépense"} récurrent(e)
               </Label>
             </div>
           </div>
