@@ -34,6 +34,7 @@ jobs:
           remote_host: ${{ secrets.SERVER_IP }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          rsh: "ssh -p ${{ secrets.SERVER_SSH_PORT }}"
 
       - name: Set permissions
         uses: appleboy/ssh-action@v1.0.0
