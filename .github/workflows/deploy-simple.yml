@@ -31,14 +31,14 @@ jobs:
           switches: -avzr --delete
           path: dist/
           remote_path: /var/www/bft.petitglacon.com/
-          remote_host: ${{ secrets.SERVER_HOST }}
+          remote_host: ${{ secrets.SERVER_IP }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Set permissions
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.SERVER_HOST }}
+          host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
