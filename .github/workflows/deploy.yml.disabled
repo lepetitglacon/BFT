@@ -1,0 +1,32 @@
+name: Deploy to OVH
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to OVH via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            cd /var/www/bft.petitglacon.com   # adapte ce path si nécessaire
+
+            echo "Pulling latest code..."
+            git pull
+
+            echo "Restarting containers..."
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+          EOF
