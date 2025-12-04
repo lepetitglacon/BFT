@@ -7,105 +7,64 @@
 
 # Roadmap
 
-1. Flow chart par mois ✅ Déjà partiellement fait
+1. Flow chart par mois ✅ TERMINÉ
 
-État actuel : Le graphique Sankey affiche les transactions récurrentes.
+État : Le graphique Sankey affiche désormais toutes les transactions (récurrentes et ponctuelles) par mois.
 
-À améliorer :
+Fonctionnalités implémentées :
 
-- Ajouter un sélecteur de mois
-- Filtrer les transactions par mois sélectionné
-- Afficher les transactions ponctuelles ET récurrentes du mois
-- Calculer les totaux mensuels réels
-
-Plan technique :
-
-1. Ajouter un state selectedMonth dans Sankey.tsx
-2. Filtrer expenses par date (mois/année)
-3. Créer les liens Sankey pour ce mois spécifique
-4. Afficher un résumé : revenus vs dépenses du mois
+- ✅ Sélecteur de mois et année
+- ✅ Filtrage des transactions par mois sélectionné
+- ✅ Affichage des transactions ponctuelles ET récurrentes du mois
+- ✅ Calcul et affichage des totaux mensuels (revenus, dépenses, solde)
+- ✅ Interface avec résumé financier mensuel
 
   ---
 
-2. Créer des dépenses récurrentes sur une période donnée
+2. Créer des dépenses récurrentes sur une période donnée ✅ TERMINÉ
 
-Objectif : Générer automatiquement des transactions récurrentes sur plusieurs mois.
+État : Les utilisateurs peuvent maintenant générer automatiquement des transactions récurrentes sur plusieurs mois.
 
-Plan technique :
+Fonctionnalités implémentées :
 
-Étape 1 : Ajouter les champs à Expense
-interface Expense {
-// ... champs existants
-recurrenceEndDate?: string // Date de fin de récurrence
-recurrenceFrequency?: "monthly" | "weekly" | "yearly"
-}
-
-Étape 2 : Créer un service de génération
-// src/services/recurrenceGenerator.ts
-function generateRecurringExpenses(
-baseExpense: Expense,
-startDate: Date,
-endDate: Date,
-frequency: "monthly" | "weekly"
-): Expense[]
-
-Étape 3 : Modifier ExpenseModal
-
-- Ajouter checkbox "Générer pour une période"
-- Si coché, afficher :
-    - Date de début
-    - Date de fin
-    - Fréquence (mensuel/hebdomadaire)
-- À la sauvegarde, générer toutes les occurrences
-
-Étape 4 : Affichage dans Expenses
-
-- Grouper les dépenses récurrentes générées
-- Option "Voir toutes les occurrences" ou "Voir uniquement le modèle"
+- ✅ Champs ajoutés à l'interface Expense (recurrenceEndDate, recurrenceFrequency)
+- ✅ Service de génération créé (src/services/recurrenceGenerator.ts)
+- ✅ ExpenseModal modifié avec checkbox "Générer sur une période"
+- ✅ Sélecteur de fréquence (hebdomadaire, mensuel, annuel)
+- ✅ Génération automatique lors de la sauvegarde
+- ✅ Sauvegarde en lot des dépenses générées
 
   ---
 
-3. OCR des photos de notes
+3. OCR des photos de notes ✅ TERMINÉ
 
-Objectif : Scanner une photo de ticket de caisse et extraire les données.
+État : Les utilisateurs peuvent maintenant scanner des tickets de caisse et extraire automatiquement les données avec une sélection interactive ligne par ligne.
 
-Plan technique :
+Fonctionnalités implémentées :
 
-Étape 1 : Choisir une solution OCR
-
-- Option A : Tesseract.js (client-side, gratuit)
-- Option B : Google Cloud Vision API (plus précis, payant)
-- Option C : Azure Computer Vision
-
-Étape 2 : Créer le composant de capture
-// src/components/ReceiptScanner.tsx
-
-- Input file ou capture photo (mobile)
-- Preview de l'image
-- Bouton "Scanner"
-
-Étape 3 : Parser le résultat OCR
-// src/services/receiptParser.ts
-interface ReceiptData {
-merchant: string
-date: string
-total: number
-items: { description: string; amount: number }[]
-}
-
-function parseReceipt(ocrText: string): ReceiptData
-
-Étape 4 : Intégration dans ExpenseModal
-
-- Ajouter onglet "Scanner un ticket"
-- Après scan, pré-remplir le formulaire
-- Permettre correction manuelle avant sauvegarde
-
-Étape 5 : Gestion des images
-
-- Stocker l'image dans localStorage (base64) ou
-- Upload vers un service cloud (Firebase Storage)
-- Associer l'image à la dépense
+- ✅ Solution OCR : Tesseract.js (client-side, gratuit)
+- ✅ Composant ReceiptScanner.tsx avec preview et progression
+- ✅ **Interface de sélection interactive**
+  - Affichage du texte OCR ligne par ligne
+  - Sélection manuelle des lignes pour chaque champ (Description, Montant, Date, Catégorie)
+  - Code couleur pour différencier les champs sélectionnés
+  - Pré-sélection automatique suggérée par le parser
+  - Interface intuitive avec boutons de champ colorés
+- ✅ Service receiptParser.ts pour parser le texte OCR
+  - Extraction du commerçant
+  - Extraction de la date (formats multiples)
+  - Extraction du montant total
+  - Extraction des articles
+  - Détection automatique de la catégorie
+- ✅ Intégration dans ExpenseModal avec système d'onglets
+  - Onglet "Saisie manuelle"
+  - Onglet "Scanner un ticket"
+  - Validation et correction manuelle
+- ✅ Service imageStorage.ts pour la gestion des images
+  - Compression automatique des images
+  - Stockage dans localStorage (base64)
+  - Association image/dépense via ID unique
+  - Fonctions de nettoyage des images orphelines
 
   ---
 

@@ -73,6 +73,11 @@ export function Expenses() {
     }
   }
 
+  const handleSaveBatchExpenses = (batchExpenses: Expense[]) => {
+    const allExpenses = [...expenses, ...batchExpenses]
+    setExpenses(allExpenses)
+  }
+
   const handleDeleteExpense = (id: number) => {
     if (confirm("Êtes-vous sûr de vouloir supprimer cette dépense ?")) {
       deleteExpense(id)
@@ -580,6 +585,8 @@ export function Expenses() {
         open={isModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveExpense}
+        onSaveBatch={handleSaveBatchExpenses}
+        existingExpenses={expenses}
       />
 
       <CsvImportModal

@@ -8,6 +8,11 @@ export interface Expense {
   date: string
   recurring: boolean
   type: "expense" | "income"
+  recurrenceEndDate?: string // Date de fin de récurrence
+  recurrenceFrequency?: "monthly" | "weekly" | "yearly"
+  isGenerated?: boolean // Indique si cette dépense a été générée automatiquement
+  parentId?: number // ID de la dépense parent si générée
+  receiptImage?: string // Image du ticket en base64 (pour les dépenses scannées)
 }
 
 // Clé de query pour les dépenses
