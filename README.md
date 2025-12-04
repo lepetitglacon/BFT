@@ -7,6 +7,8 @@
 
 # test CI
 
+- ajouté la var IP dans github
+
 # Roadmap
 
 1. Flow chart par mois ✅ TERMINÉ
