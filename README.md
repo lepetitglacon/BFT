@@ -8,6 +8,7 @@
 # test CI
 
 - ajouté la var IP dans github
+- nouvelle clé SSH sans password
 
 # Roadmap
 
